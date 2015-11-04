@@ -1,0 +1,14 @@
+[
+ {
+   "remote":      "benzo",
+   "repository":  "kernel_huawei_angler",
+   "target_path": "kernel/huawei/angler",
+   "revision":    "marshmallow"
+ },
+ {
+   "remote":      "benzo",
+   "repository":  "vendor_huawei_angler",
+   "target_path": "vendor/huawei",
+   "revision":    "marshmallow"
+ }
+]
