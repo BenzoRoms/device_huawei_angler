@@ -62,6 +62,9 @@ TARGET_NO_RPC := true
 
 BOARD_EGL_CFG := device/huawei/angler/egl.cfg
 
+# Keymaster - Wait for qseecom to load
+TARGET_KEYMASTER_WAIT_FOR_QSEE := true
+
 # Shader cache config options
 # Maximum size of the  GLES Shaders that can be cached for reuse.
 # Increase the size if shaders of size greater than 12KB are used.

@@ -39,3 +39,8 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     AOSPLinks
+
+# TWRP
+PRODUCT_COPY_FILES += \
+    device/huawei/angler/twrp.fstab:recovery/root/etc/twrp.fstab
+
