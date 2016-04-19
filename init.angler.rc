@@ -122,6 +122,10 @@ on boot
     # TapToWake
     chown system system /sys/devices/soc.0/f9924000.i2c/i2c-2/2-0070/input/input0/wake_gesture
 
+    # Assertive Display
+    chown system system /sys/class/graphics/fb0/ad
+    write /sys/class/graphics/fb0/ad 1
+
 on property:init.svc.per_mgr=running
     start per_proxy
 
