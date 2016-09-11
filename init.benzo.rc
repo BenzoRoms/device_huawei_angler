@@ -1,0 +1,140 @@
+on init
+    export ANDROID_CACHE /cache
+    export TERMINFO /system/etc/terminfo
+
+    # Run sysinit
+    start sysinit
+
+on boot
+
+    chown system system /dev/cpuctl/cpu.notify_on_migrate
+    chmod 0660 /dev/cpuctl/cpu.notify_on_migrate
+    write /sys/module/msm_thermal/core_control/enabled 0
+
+    chown system system /sys/block/mmcblk0/queue/scheduler
+    chmod 0664 /sys/block/mmcblk0/queue/scheduler
+    restorecon /sys/block/mmcblk0/queue/scheduler
+
+    chown system system /sys/module/workqueue/parameters/power_efficient
+    chmod 0664 /sys/module/workqueue/parameters/power_efficient
+
+    # Persistent properties (only created if persist exists)
+    mkdir /persist/properties 0770 system system
+
+    # Other kernel settings
+    write /sys/module/msm_performance/parameters/touchboost 0
+    write /sys/module/msm_thermal/core_control/enabled 0
+    write /sys/module/msm_thermal/parameters/enabled Y
+    write /sys/module/sync/parameters/fsync_enabled N
+    write /sys/module/mmc_core/parameters/use_spi_crc 0
+
+    # iosched
+    write /sys/block/mmcblk0/queue/scheduler fiops
+    write /sys/block/mmcblk0/queue/read_ahead_kb 2048
+
+on property:dev.bootcomplete=1
+
+    # Thermal control
+    write /sys/module/msm_thermal/parameters/poll_ms 350
+    write /sys/module/msm_thermal/parameters/temp_threshold 63
+
+    #LITTLE
+    write /sys/devices/system/cpu/cpu0/online 1
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 384000
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1555200
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/hispeed_freq 1555200
+    write /sys/devices/system/cpu/cpu1/online 1
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 384000
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1555200
+    write /sys/devices/system/cpu/cpu1/cpufreq/interactive/hispeed_freq 1555200
+    write /sys/devices/system/cpu/cpu2/online 1
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 384000
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 1555200
+    write /sys/devices/system/cpu/cpu2/cpufreq/interactive/hispeed_freq 1555200
+    write /sys/devices/system/cpu/cpu3/online 1
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 384000
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 1555200
+    write /sys/devices/system/cpu/cpu3/cpufreq/interactive/hispeed_freq 1555200
+
+    #big.
+    write /sys/devices/system/cpu/cpu4/online 1
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 302400
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 1958400
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/hispeed_freq 1958400
+    write /sys/devices/system/cpu/cpu5/online 1
+    write /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu5/cpufreq/scaling_min_freq 302400
+    write /sys/devices/system/cpu/cpu5/cpufreq/scaling_max_freq 1958400
+    write /sys/devices/system/cpu/cpu5/cpufreq/interactive/hispeed_freq 1958400
+    write /sys/devices/system/cpu/cpu6/online 1
+    write /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu6/cpufreq/scaling_min_freq 302400
+    write /sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq 1958400
+    write /sys/devices/system/cpu/cpu6/cpufreq/interactive/hispeed_freq 1958400
+    write /sys/devices/system/cpu/cpu7/online 1
+    write /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 302400
+    write /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 1958400
+    write /sys/devices/system/cpu/cpu7/cpufreq/interactive/hispeed_freq 1958400
+
+    # Wake Gestures
+    chown system system /sys/android_touch/doubletap2wake
+    chmod 0644 /sys/android_touch/doubletap2wake
+    chown system system /sys/android_touch/sweep2wake
+    chmod 0644 /sys/android_touch/sweep2wake
+    chown system system /sys/android_touch/sweep2sleep
+    chmod 0644 /sys/android_touch/sweep2sleep
+    chown system system /sys/android_touch/wake_gestures
+    chmod 0644 /sys/android_touch/wake_gestures
+    chown system system /sys/android_touch/vib_strength
+    chmod 0644 /sys/android_touch/vib_strength
+    write /sys/android_touch/vib_strength 40
+
+    # Backlight dimmer
+    write /sys/module/mdss_fb/parameters/backlight_dimmer Y
+
+    # Vibrate maxx
+    write /sys/class/timed_output/vibrator/vmax_mv_strong 3596
+    write /sys/devices/virtual/timed_output/vibrator/vmax_mv_light 3296
+
+    # Volume maxx
+    write /sys/devices/virtual/misc/soundcontrol/volume_boost 20
+
+    # ksm
+    write /sys/kernel/mm/ksm/run 1
+
+    # Re-enable retention idle state
+    write /sys/module/lpm_levels/system/a53/cpu0/retention/idle_enabled Y
+    write /sys/module/lpm_levels/system/a53/cpu1/retention/idle_enabled Y
+    write /sys/module/lpm_levels/system/a53/cpu2/retention/idle_enabled Y
+    write /sys/module/lpm_levels/system/a53/cpu3/retention/idle_enabled Y
+    write /sys/module/lpm_levels/system/a57/cpu4/retention/idle_enabled Y
+    write /sys/module/lpm_levels/system/a57/cpu5/retention/idle_enabled Y
+    write /sys/module/lpm_levels/system/a53/a53-l2-retention/idle_enabled Y
+    write /sys/module/lpm_levels/system/a57/a57-l2-retention/idle_enabled Y
+
+# adb over network
+on property:service.adb.tcp.port=5555
+    stop adbd
+    start adbd
+on property:service.adb.tcp.port=-1
+    stop adbd
+    start adbd
+
+# sysinit (/system/etc/init.d)
+service sysinit /system/bin/sysinit
+    user root
+    oneshot
+    disabled
+
+# init.d (/system/etc/init.d)
+service userinit /system/xbin/busybox run-parts /system/etc/init.d
+    oneshot
+    class late_start
+    user root
+    group root

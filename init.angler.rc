@@ -17,6 +17,7 @@
 import init.angler.usb.rc
 import init.angler.diag.rc
 import init.angler.sensorhub.rc
+import init.benzo.rc
 
 on early-init
     mount debugfs debugfs /sys/kernel/debug
@@ -31,7 +32,10 @@ on init
 
     # Setup zram options
     write /sys/block/zram0/comp_algorithm lz4
-    write /sys/block/zram0/max_comp_streams 4
+    write /sys/block/zram0/disksize 1069547520
+
+    # Enable zswap
+    write /sys/module/zswap/parameters/enabled Y
 
     write /proc/sys/vm/page-cluster 0
 
@@ -231,6 +235,7 @@ on post-fs-data
     chmod 0660 /sys/devices/system/cpu/cpu6/online
     chown system system /sys/devices/system/cpu/cpu7/online
     chmod 0660 /sys/devices/system/cpu/cpu7/online
+
 on charger
    #set cpu4,5 online first, or they can't get into low power consumption mode
    write /sys/devices/system/cpu/cpu4/online 1
