@@ -436,4 +436,7 @@
     <bool name="config_proximityCheckOnWake">true</bool>
     <integer name="config_proximityCheckTimeout">300</integer>
 
+    <!-- enable night light -->
+    <bool name="config_nightDisplayAvailable">true</bool>
+
 </resources>
