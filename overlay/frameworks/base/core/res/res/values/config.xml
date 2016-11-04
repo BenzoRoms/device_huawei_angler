@@ -425,4 +425,7 @@
     -->
     <bool name="config_enableWifiDisplay">true</bool>
 
+    <!-- enable night light -->
+    <bool name="config_nightDisplayAvailable">true</bool>
+
 </resources>
