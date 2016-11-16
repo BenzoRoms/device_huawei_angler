@@ -283,7 +283,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # DPI Settings
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.sf.lcd_density=520
+    ro.sf.lcd_density=560
 
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.hwc.mdpcomp.enable=true \
