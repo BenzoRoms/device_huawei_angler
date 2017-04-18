@@ -19,13 +19,13 @@ function get-set-forall() {
 }
 
 ################################################################################
-
 # disable thermal bcl hotplug to switch governor
-write /sys/module/msm_thermal/core_control/enabled 0
+write /sys/module/msm_thermal/core_control/enabled 1
 get-set-forall /sys/devices/soc.0/qcom,bcl.*/mode disable
 bcl_hotplug_mask=`get-set-forall /sys/devices/soc.0/qcom,bcl.*/hotplug_mask 0`
 bcl_hotplug_soc_mask=`get-set-forall /sys/devices/soc.0/qcom,bcl.*/hotplug_soc_mask 0`
 get-set-forall /sys/devices/soc.0/qcom,bcl.*/mode enable
+write /sys/module/msm_thermal/parameters/enabled Y
 
 # some files in /sys/devices/system/cpu are created after the restorecon of
 # /sys/. These files receive the default label "sysfs".
@@ -37,44 +37,46 @@ write /sys/devices/system/cpu/cpu5/online 0
 write /sys/devices/system/cpu/cpu6/online 0
 write /sys/devices/system/cpu/cpu7/online 0
 
-# Best effort limiting for first time boot if msm_performance module is absent
-write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 960000
-
-# Limit A57 max freq from msm_perf module in case CPU 4 is offline
-write /sys/module/msm_performance/parameters/cpu_max_freq "4:960000 5:960000 6:960000 7:960000"
-
-# configure governor settings for little cluster
+#LITTLE
 write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
 restorecon -R /sys/devices/system/cpu # must restore after interactive
-write /sys/devices/system/cpu/cpu0/cpufreq/interactive/use_sched_load 1
-write /sys/devices/system/cpu/cpu0/cpufreq/interactive/use_migration_notif 1
-write /sys/devices/system/cpu/cpu0/cpufreq/interactive/above_hispeed_delay 19000
 write /sys/devices/system/cpu/cpu0/cpufreq/interactive/go_hispeed_load 99
+write /sys/devices/system/cpu/cpu0/cpufreq/interactive/above_hispeed_delay "26000 600000:20000 672000:10000"
 write /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_rate 20000
 write /sys/devices/system/cpu/cpu0/cpufreq/interactive/hispeed_freq 960000
-write /sys/devices/system/cpu/cpu0/cpufreq/interactive/io_is_busy 1
-write /sys/devices/system/cpu/cpu0/cpufreq/interactive/target_loads "65 460000:75 960000:80"
-write /sys/devices/system/cpu/cpu0/cpufreq/interactive/min_sample_time 40000
-write /sys/devices/system/cpu/cpu0/cpufreq/interactive/max_freq_hysteresis 80000
-write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 384000
+write /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_slack 30000
+write /sys/devices/system/cpu/cpu0/cpufreq/interactive/target_loads 90
+write /sys/devices/system/cpu/cpu0/cpufreq/interactive/min_sample_time 38000
+write /sys/devices/system/cpu/cpu0/cpufreq/interactive/boost 0
+write /sys/devices/system/cpu/cpu0/cpufreq/interactive/align_windows 0
+write /sys/devices/system/cpu/cpu0/cpufreq/interactive/use_migration_notif 0
+write /sys/devices/system/cpu/cpu0/cpufreq/interactive/use_sched_load 0
+write /sys/devices/system/cpu/cpu0/cpufreq/interactive/max_freq_hysteresis 33000
+write /sys/devices/system/cpu/cpu0/cpufreq/interactive/boostpulse_duration 40000
 
 # online CPU4
 write /sys/devices/system/cpu/cpu4/online 1
 
-# configure governor settings for big cluster
+#big.
 write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor interactive
 restorecon -R /sys/devices/system/cpu # must restore after interactive
-write /sys/devices/system/cpu/cpu4/cpufreq/interactive/use_sched_load 1
-write /sys/devices/system/cpu/cpu4/cpufreq/interactive/use_migration_notif 1
+write /sys/devices/system/cpu/cpu4/cpufreq/interactive/go_hispeed_load 100
 write /sys/devices/system/cpu/cpu4/cpufreq/interactive/above_hispeed_delay 19000
-write /sys/devices/system/cpu/cpu4/cpufreq/interactive/go_hispeed_load 99
 write /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_rate 20000
 write /sys/devices/system/cpu/cpu4/cpufreq/interactive/hispeed_freq 1248000
-write /sys/devices/system/cpu/cpu4/cpufreq/interactive/io_is_busy 1
-write /sys/devices/system/cpu/cpu4/cpufreq/interactive/target_loads "70 960000:80 1248000:85"
+write /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_slack 30000
+write /sys/devices/system/cpu/cpu4/cpufreq/interactive/target_loads 90
 write /sys/devices/system/cpu/cpu4/cpufreq/interactive/min_sample_time 40000
-write /sys/devices/system/cpu/cpu4/cpufreq/interactive/max_freq_hysteresis 80000
-write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 633600
+write /sys/devices/system/cpu/cpu4/cpufreq/interactive/boost 0
+write /sys/devices/system/cpu/cpu4/cpufreq/interactive/align_windows 0
+write /sys/devices/system/cpu/cpu4/cpufreq/interactive/use_migration_notif 0
+write /sys/devices/system/cpu/cpu4/cpufreq/interactive/use_sched_load 0
+write /sys/devices/system/cpu/cpu4/cpufreq/interactive/max_freq_hysteresis 30000
+write /sys/devices/system/cpu/cpu4/cpufreq/interactive/boostpulse_duration 40000
+
+write /sys/module/cpu_boost/parameters/input_boost_enabled
+write /sys/module/cpu_boost/parameters/input_boost_enabled 1
+write /sys/module/cpu_boost/parameters/input_boost_freq "0:600000 1:600000 2:0 3:0 4:0 5:0 6:0 7:0"
 
 # restore A57's max
 copy /sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_max_freq /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq
@@ -84,11 +86,8 @@ write /sys/devices/system/cpu/cpu5/online 1
 write /sys/devices/system/cpu/cpu6/online 1
 write /sys/devices/system/cpu/cpu7/online 1
 
-# Restore CPU 4 max freq from msm_performance
-write /sys/module/msm_performance/parameters/cpu_max_freq "4:4294967295 5:4294967295 6:4294967295 7:4294967295"
-
 # input boost configuration
-write /sys/module/cpu_boost/parameters/input_boost_freq "0:1344000"
+write /sys/module/cpu_boost/parameters/input_boost_freq
 write /sys/module/cpu_boost/parameters/input_boost_ms 40
 
 # Setting B.L scheduler parameters
@@ -106,12 +105,16 @@ get-set-forall  /sys/class/devfreq/qcom,cpubw*/governor bw_hwmon
 # Disable sched_boost
 write /proc/sys/kernel/sched_boost 0
 
+# Enable all LPMs by default
+write /sys/module/lpm_levels/parameters/sleep_disabled 0
+
 # re-enable thermal and BCL hotplug
-write /sys/module/msm_thermal/core_control/enabled 1
+write /sys/module/msm_thermal/core_control/enabled 0
 get-set-forall /sys/devices/soc.0/qcom,bcl.*/mode disable
 get-set-forall /sys/devices/soc.0/qcom,bcl.*/hotplug_mask $bcl_hotplug_mask
 get-set-forall /sys/devices/soc.0/qcom,bcl.*/hotplug_soc_mask $bcl_hotplug_soc_mask
 get-set-forall /sys/devices/soc.0/qcom,bcl.*/mode enable
+write /sys/module/msm_thermal/parameters/enabled Y
 
 # change GPU initial power level from 305MHz(level 4) to 180MHz(level 5) for power savings
 write /sys/class/kgsl/kgsl-3d0/default_pwrlevel 5
