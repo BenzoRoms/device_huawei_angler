@@ -141,6 +141,11 @@ on property:sys.boot_completed=1
     write /sys/devices/system/cpu/cpu6/online 1
     write /sys/devices/system/cpu/cpu7/online 1
 
+    # Fix audio distortion
+    write /sys/module/snd_soc_wcd9330/parameters/uhqa_mode_pdesireaudio 0
+    write /sys/kernel/sound_control_3/gpl_speaker_gain 5
+    write /sys/kernel/sound_control_3/gpl_headphone_pa_gain 0
+
 # adb over network
 on property:service.adb.tcp.port=5555
     stop adbd
