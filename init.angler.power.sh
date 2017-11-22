@@ -74,8 +74,8 @@ write /sys/devices/system/cpu/cpu4/cpufreq/interactive/use_sched_load 0
 write /sys/devices/system/cpu/cpu4/cpufreq/interactive/max_freq_hysteresis 30000
 write /sys/devices/system/cpu/cpu4/cpufreq/interactive/boostpulse_duration 40000
 
-write /sys/module/cpu_boost/parameters/input_boost_enabled 1
-write /sys/module/cpu_boost/parameters/input_boost_freq "0:600000 1:600000 2:0 3:0 4:0 5:0 6:0 7:0"
+# Dynamic stuneBoost
+write /sys/module/cpu_boost/parameters/dynamic_stune_boost 1
 
 # restore A57's max
 copy /sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_max_freq /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq
